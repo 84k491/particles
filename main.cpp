@@ -4,6 +4,10 @@
 
 #include <iostream>
 
+// TODO handle window borders
+// TODO mulithreaded rendering
+// TODO mulithreaded calculations
+
 int main()
 {
     Application app;

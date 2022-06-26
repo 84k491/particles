@@ -1,9 +1,15 @@
 #include "Application.h"
 
 Application::Application()
-    : m_window(sf::VideoMode(window_width, window_height), "SFML works!")
+    : m_window(sf::VideoMode(window_width, window_height), "Particle Sandbox")
+    , m_physics_core(sf::Vector2f(window_width, window_height))
     , m_event_handler(m_window, m_physics_core)
 {
+}
+
+Application::~Application()
+{
+    m_fps_counter.print_avg_fps();
 }
 
 void Application::render_loop()
@@ -16,7 +22,6 @@ void Application::render_loop()
         m_window.display();
 
         m_fps_counter.on_frame_draw();
-        // m_fps_counter.print_fps();
 
         m_physics_core.calculate();
     }

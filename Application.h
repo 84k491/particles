@@ -11,6 +11,7 @@
 class Application {
 public:
     Application();
+    ~Application();
 
     void render_loop(); // TODO move to renderer module
 
