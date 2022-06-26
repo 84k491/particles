@@ -32,8 +32,7 @@ Renderer::~Renderer()
 void Renderer::draw_particles()
 {
     for (const auto p : m_physics_core.m_particles) {
-        const auto shape = p.construct_shape();
-        m_window.draw(shape);
+        m_window.draw(p.m_shape);
     }
 }
 
@@ -59,11 +58,24 @@ void Renderer::work()
 
     while (m_window.isOpen()) {
         m_window.clear();
+
+        const auto start = std::chrono::system_clock::now();
+
         draw_particles();
+        const auto particles_drawed = std::chrono::system_clock::now();
+
         m_window.display();
+        const auto buffer_dispayed = std::chrono::system_clock::now();
 
         m_fps_counter.on_frame_draw();
-
         m_physics_core.calculate(); // TODO move to another thread
+
+        const auto calculations_done = std::chrono::system_clock::now();
+
+        std::chrono::duration<double> particles_drawed_time = particles_drawed - start;
+        std::chrono::duration<double> calc_done_time = calculations_done - buffer_dispayed;
+
+        std::cout << "particles_drawed_time: " << particles_drawed_time.count() << "s" << std::endl;
+        std::cout << "calc_done_time: " << calc_done_time.count() << "s" << std::endl;
     }
 }
