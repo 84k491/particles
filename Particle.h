@@ -5,7 +5,7 @@
 class Particle {
 public:
     Particle()
-        : m_shape(m_weight, 10) // TODO use 10 as a point count
+        : m_shape(m_weight, 4) // TODO use 10 as a point count
     {
     }
 

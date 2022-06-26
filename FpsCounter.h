@@ -22,7 +22,7 @@ public:
     void print_avg_fps() const { std::cout << "Average fps: " << m_avg_counter.average() << std::endl; }
 
 private:
-    AverageCounter m_avg_counter;
+    AverageCounter<size_t> m_avg_counter;
     std::chrono::time_point<std::chrono::system_clock> m_previous;
     float m_current_fps = 0.f;
 };
