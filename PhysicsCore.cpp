@@ -1,11 +1,11 @@
 #include "PhysicsCore.h"
 
-float vec_mod(const sf::Vector2f & pt)
+float vec_mod(const sf::Vector2f& pt)
 {
     return std::sqrt(pt.x * pt.x + pt.y * pt.y);
 }
 
-void normalize(sf::Vector2f & pt)
+void normalize(sf::Vector2f& pt)
 {
     const auto mod = vec_mod(pt);
     pt.x /= mod;
@@ -28,13 +28,13 @@ void PhysicsCore::calculate()
     float time_coef = time_diff.count();
     m_previous_calculation = now;
 
-    for (auto & p : m_particles) {
+    for (auto& p : m_particles) {
         sf::Vector2f acceleration(
             p.m_velosity.x * constant_resistance_factor,
             p.m_velosity.y * constant_resistance_factor);
 
         if (m_gravity_point.has_value()) {
-            auto grav_acc =  *m_gravity_point - p.m_position;
+            auto grav_acc = *m_gravity_point - p.m_position;
             const auto mod = vec_mod(grav_acc);
             normalize(grav_acc);
             float effective_radius = 1000.f;
@@ -75,4 +75,3 @@ void PhysicsCore::on_mouse_event(bool is_pressed, float x, float y)
 
     m_gravity_point = std::make_optional<sf::Vector2f>(x, y);
 }
-

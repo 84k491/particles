@@ -3,8 +3,7 @@
 #include "Particle.h"
 #include "Randomizer.h"
 
-class ParticleFactory
-{
+class ParticleFactory {
 public:
     ParticleFactory();
     Particle create_particle();
@@ -15,4 +14,3 @@ private:
     Randomizer m_weight_randomizer;
     Randomizer m_velosity_randomizer;
 };
-

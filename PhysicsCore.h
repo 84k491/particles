@@ -7,8 +7,7 @@
 #include <chrono>
 #include <optional>
 
-class PhysicsCore
-{
+class PhysicsCore {
 public:
     static constexpr float max_velosity = 1400.f;
     static constexpr size_t particle_amount_at_start = 2000;
@@ -23,4 +22,3 @@ public: // TODO make private
     std::optional<sf::Vector2f> m_gravity_point;
     std::chrono::time_point<std::chrono::system_clock> m_previous_calculation;
 };
-

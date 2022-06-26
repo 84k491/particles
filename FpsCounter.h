@@ -3,8 +3,7 @@
 #include <chrono>
 #include <iostream>
 
-class FpsCounter
-{
+class FpsCounter {
 public:
     FpsCounter() {}
     void on_frame_draw()

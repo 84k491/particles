@@ -8,8 +8,7 @@
 
 // TODO handle window resize
 
-class Application
-{
+class Application {
 public:
     Application();
 

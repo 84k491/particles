@@ -8,8 +8,7 @@ Application::Application()
 
 void Application::render_loop()
 {
-    while (m_window.isOpen())
-    {
+    while (m_window.isOpen()) {
         m_event_handler.handle_events();
 
         m_window.clear();

@@ -21,4 +21,3 @@ private:
 
 constexpr size_t window_width = 1280;
 constexpr size_t window_height = 960;
-
