@@ -1,8 +1,8 @@
 #include "AverageCounter.h"
 
-#include <numeric>
-#include <iostream>
 #include <functional>
+#include <iostream>
+#include <numeric>
 
 AverageCounter::AverageCounter()
 {

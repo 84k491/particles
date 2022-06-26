@@ -1,6 +1,6 @@
 #include "ParticleFactory.h"
 
-ParticleFactory::ParticleFactory(const sf::Vector2f &, const sf::Vector2f & pos_br_border)
+ParticleFactory::ParticleFactory(const sf::Vector2f&, const sf::Vector2f& pos_br_border)
     : m_width_randomizer(pos_br_border.x) // TODO use left border too!
     , m_height_randomizer(pos_br_border.y) // TODO use top border too!
     , m_weight_randomizer(1.5f)

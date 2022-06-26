@@ -1,16 +1,19 @@
-#include <SFML/Graphics.hpp>
-
 #include "Application.h"
+
+#include <SFML/Graphics.hpp>
+#include <X11/Xlib.h>
 
 #include <iostream>
 
-// TODO handle window borders
 // TODO mulithreaded rendering
 // TODO mulithreaded calculations
+// TODO hud?
+// TODO use config
 
 int main()
 {
+    XInitThreads();
     Application app;
-    app.render_loop();
+    app.window_loop();
     return 0;
 }

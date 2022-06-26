@@ -5,7 +5,7 @@
 
 class ParticleFactory {
 public:
-    ParticleFactory(const sf::Vector2f & pos_tl_border, const sf::Vector2f & pos_br_border);
+    ParticleFactory(const sf::Vector2f& pos_tl_border, const sf::Vector2f& pos_br_border);
     Particle create_particle();
 
 private:

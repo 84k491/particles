@@ -7,8 +7,7 @@
 #include <chrono>
 #include <optional>
 
-enum class BorderCrossing
-{
+enum class BorderCrossing {
     None,
     Top,
     Bottom,
@@ -19,17 +18,17 @@ enum class BorderCrossing
 class PhysicsCore {
 public:
     static constexpr float max_color_velosity = 1400.f;
-    static constexpr size_t particle_amount_at_start = 1000;
+    static constexpr size_t particle_amount_at_start = 10000;
     static constexpr unsigned window_margin_px = 5;
 
-    PhysicsCore(const sf::Vector2f & window_br_border);
+    PhysicsCore(const sf::Vector2f& window_br_border);
 
     void calculate();
     void on_mouse_event(bool is_pressed, float x, float y);
 
 private:
-    BorderCrossing if_out_of_borders(const Particle & p) const;
-    void handle_border_crossing(Particle & p) const;
+    BorderCrossing if_out_of_borders(const Particle& p) const;
+    void handle_border_crossing(Particle& p) const;
 
 public: // TODO make private
     sf::Vector2f m_br_border;

@@ -6,21 +6,40 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <memory>
+#include <thread>
+
 // TODO handle window resize
+
+class Renderer {
+public:
+    Renderer(PhysicsCore& physics_core, sf::RenderWindow& window);
+    ~Renderer();
+
+    void start();
+    void stop();
+
+private:
+    void work();
+
+    void draw_particles();
+
+private:
+    PhysicsCore& m_physics_core;
+    sf::RenderWindow& m_window;
+    FpsCounter m_fps_counter;
+    std::unique_ptr<std::thread> m_worker;
+};
 
 class Application {
 public:
     Application();
-    ~Application();
 
-    void render_loop(); // TODO move to renderer module
-
-private:
-    void draw_particles();
+    void window_loop();
 
 private:
-    FpsCounter m_fps_counter;
     sf::RenderWindow m_window;
     PhysicsCore m_physics_core;
     EventHandler m_event_handler;
+    Renderer m_renderer;
 };

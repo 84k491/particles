@@ -14,7 +14,7 @@ void normalize(sf::Vector2f& pt)
 
 constexpr float constant_resistance_factor = -2.f;
 
-PhysicsCore::PhysicsCore(const sf::Vector2f & window_br_border)
+PhysicsCore::PhysicsCore(const sf::Vector2f& window_br_border)
     : m_br_border(sf::Vector2f(window_br_border.x - window_margin_px, window_br_border.y - window_margin_px))
     , m_tl_border(window_margin_px, window_margin_px)
     , m_factory(m_tl_border, m_br_border)
@@ -80,9 +80,9 @@ void PhysicsCore::on_mouse_event(bool is_pressed, float x, float y)
     m_gravity_point = std::make_optional<sf::Vector2f>(x, y);
 }
 
-BorderCrossing PhysicsCore::if_out_of_borders(const Particle & p) const
+BorderCrossing PhysicsCore::if_out_of_borders(const Particle& p) const
 {
-    const auto & pos = p.m_position;
+    const auto& pos = p.m_position;
     if (pos.x > m_br_border.x) {
         return BorderCrossing::Right;
     }
@@ -98,12 +98,11 @@ BorderCrossing PhysicsCore::if_out_of_borders(const Particle & p) const
     return BorderCrossing::None;
 }
 
-void PhysicsCore::handle_border_crossing(Particle & p) const
+void PhysicsCore::handle_border_crossing(Particle& p) const
 {
     const auto crossed = if_out_of_borders(p);
 
-    switch (crossed)
-    {
+    switch (crossed) {
     case BorderCrossing::Top:
     case BorderCrossing::Bottom:
         p.m_velosity.y = -p.m_velosity.y;
@@ -113,6 +112,7 @@ void PhysicsCore::handle_border_crossing(Particle & p) const
         p.m_velosity.x = -p.m_velosity.x;
         break;
     case BorderCrossing::None:
-    default: return;
+    default:
+        return;
     };
 }
