@@ -6,7 +6,6 @@
 #include <iostream>
 
 // TODO mulithreaded rendering
-// TODO mulithreaded calculations
 // TODO hud?
 // TODO use config
 

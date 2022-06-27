@@ -24,9 +24,11 @@ Renderer::Renderer(PhysicsCore& physics_core, sf::RenderWindow& window)
     : m_physics_core(physics_core)
     , m_window(window)
 {
-    if (!m_texture.create(window_width, window_height))
-    {
-        std::cout << "Some error when creating texture" << std::endl;
+    for (auto & t : m_textures) {
+        if (!t.create(window_width, window_height))
+        {
+            std::cout << "Some error when creating texture" << std::endl;
+        }
     }
 }
 
@@ -37,8 +39,11 @@ Renderer::~Renderer()
 
 void Renderer::draw_particles()
 {
-    for (const auto & p : m_physics_core.m_particles) {
-        m_texture.draw(p.m_shape);
+    for (size_t i = 0; i < m_physics_core.m_particles.size() / 2; ++i) {
+        m_textures[0].draw(m_physics_core.m_particles[i].m_shape);
+    }
+    for (size_t i = m_physics_core.m_particles.size() / 2; i < m_physics_core.m_particles.size(); ++i) {
+        m_textures[1].draw(m_physics_core.m_particles[i].m_shape);
     }
 }
 
@@ -71,13 +76,18 @@ void Renderer::work()
     while (m_window.isOpen()) {
         const auto clean_time = tc.execution_time_in_sec([this](){
             m_window.clear(sf::Color(0, 0, 0, 255));
-            m_texture.clear(sf::Color(0, 0, 100, 200));
+            m_textures[0].clear(sf::Color(0, 0, 0, 0));
+            m_textures[1].clear(sf::Color(0, 0, 0, 0));
         });
 
         const auto draw_time_at_texture = tc.execution_time_in_sec([this](){ draw_particles(); });
 
-        sf::Sprite sprite(m_texture.getTexture());
-        const auto draw_time_at_window = tc.execution_time_in_sec([&](){ m_window.draw(sprite); });
+        sf::Sprite sprite0(m_textures[0].getTexture());
+        sf::Sprite sprite1(m_textures[1].getTexture());
+        const auto draw_time_at_window = tc.execution_time_in_sec([&](){
+            m_window.draw(sprite0);
+            m_window.draw(sprite1);
+        });
         m_window.display();
 
         m_fps_counter.on_frame_draw();
