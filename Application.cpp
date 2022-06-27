@@ -40,10 +40,10 @@ Renderer::~Renderer()
 void Renderer::draw_particles()
 {
     for (size_t i = 0; i < m_physics_core.m_particles.size() / 2; ++i) {
-        m_textures[0].draw(m_physics_core.m_particles[i].m_shape);
+        m_textures[0].draw(&m_physics_core.m_particles[i].m_shape, 1, sf::Points); // TODO don't use them individually!
     }
     for (size_t i = m_physics_core.m_particles.size() / 2; i < m_physics_core.m_particles.size(); ++i) {
-        m_textures[1].draw(m_physics_core.m_particles[i].m_shape);
+        m_textures[1].draw(&m_physics_core.m_particles[i].m_shape, 1, sf::Points);
     }
 }
 

@@ -38,7 +38,7 @@ void PhysicsCore::calculate()
             p.m_velosity.y * constant_resistance_factor);
 
         if (m_gravity_point.has_value()) {
-            auto grav_acc = *m_gravity_point - p.m_shape.getPosition();
+            auto grav_acc = *m_gravity_point - p.m_shape.position;
             const auto mod = vec_mod(grav_acc);
             normalize(grav_acc);
             float effective_radius = 1000.f;
@@ -55,7 +55,7 @@ void PhysicsCore::calculate()
         acceleration *= time_coef;
 
         handle_border_crossing(p);
-        p.m_shape.move(p.m_velosity * time_coef);
+        p.m_shape.position += (p.m_velosity * time_coef);
         p.m_velosity += acceleration;
 
         float velosity_mod = std::min(vec_mod(p.m_velosity), (max_color_velosity / p.m_weight));
@@ -64,7 +64,7 @@ void PhysicsCore::calculate()
         uint8_t red = color_shift;
         uint8_t green = 255 - color_shift;
         uint8_t blue = 20;
-        p.m_shape.setFillColor(sf::Color(red, green, blue, 220));
+        p.m_shape.color = sf::Color(red, green, blue, 220);
     }
 }
 
@@ -84,7 +84,7 @@ void PhysicsCore::on_mouse_event(bool is_pressed, float x, float y)
 
 BorderCrossing PhysicsCore::if_out_of_borders(const Particle& p) const
 {
-    const auto& pos = p.m_shape.getPosition();
+    const auto& pos = p.m_shape.position;
     if (pos.x > m_br_border.x) {
         return BorderCrossing::Right;
     }
