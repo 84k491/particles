@@ -17,6 +17,7 @@ constexpr float constant_resistance_factor = -2.f;
 PhysicsCore::PhysicsCore(const sf::Vector2f& window_br_border)
     : m_br_border(sf::Vector2f(window_br_border.x - window_margin_px, window_br_border.y - window_margin_px))
     , m_tl_border(window_margin_px, window_margin_px)
+    , m_window_br_border(window_br_border)
     , m_factory(m_tl_border, m_br_border)
 {
     for (size_t i = 0; i < particle_amount_at_start; ++i) {
@@ -77,7 +78,8 @@ void PhysicsCore::on_mouse_event(bool is_pressed, float x, float y)
         return;
     }
 
-    m_gravity_point = std::make_optional<sf::Vector2f>(x, y);
+    // substraction needed because Y coordinate is inverted when drawing with texture
+    m_gravity_point = std::make_optional<sf::Vector2f>(x, m_window_br_border.y - y);
 }
 
 BorderCrossing PhysicsCore::if_out_of_borders(const Particle& p) const

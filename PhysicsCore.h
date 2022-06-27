@@ -33,6 +33,7 @@ private:
 public: // TODO make private
     sf::Vector2f m_br_border;
     sf::Vector2f m_tl_border;
+    sf::Vector2f m_window_br_border;
     ParticleFactory m_factory;
     std::vector<Particle> m_particles;
     std::optional<sf::Vector2f> m_gravity_point;

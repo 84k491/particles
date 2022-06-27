@@ -29,6 +29,7 @@ private:
     sf::RenderWindow& m_window;
     FpsCounter m_fps_counter;
     std::unique_ptr<std::thread> m_worker;
+    sf::RenderTexture m_texture;
 };
 
 class Application {
