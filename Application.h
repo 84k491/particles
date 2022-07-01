@@ -29,6 +29,7 @@ private:
     sf::RenderWindow& m_window;
     FpsCounter m_fps_counter;
     std::unique_ptr<std::thread> m_worker;
+    // TODO use constexpr variable
     std::array<sf::RenderTexture, 2> m_textures; // place it like levels, one on top of the other
 };
 

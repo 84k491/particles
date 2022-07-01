@@ -12,16 +12,16 @@ void normalize(sf::Vector2f& pt)
     pt.y /= mod;
 }
 
-constexpr float constant_resistance_factor = -2.f;
+constexpr float constant_resistance_factor = -2.f; // TODO move to header
 
 PhysicsCore::PhysicsCore(const sf::Vector2f& window_br_border)
     : m_br_border(sf::Vector2f(window_br_border.x - window_margin_px, window_br_border.y - window_margin_px))
     , m_tl_border(window_margin_px, window_margin_px)
     , m_window_br_border(window_br_border)
-    , m_factory(m_tl_border, m_br_border)
 {
-    for (size_t i = 0; i < particle_amount_at_start; ++i) {
-        m_particles.emplace_back(m_factory.create_particle());
+    ParticleFactory factory(m_tl_border, m_br_border);
+    for (size_t i = 0; i < calc_threads_count; ++i) {
+        m_particles.emplace_back(particle_amount_at_start / calc_threads_count, factory);
     }
 }
 
@@ -32,39 +32,41 @@ void PhysicsCore::calculate()
     float time_coef = time_diff.count();
     m_previous_calculation = now;
 
-    for (auto& p : m_particles) {
-        sf::Vector2f acceleration(
-            p.m_velosity.x * constant_resistance_factor,
-            p.m_velosity.y * constant_resistance_factor);
+    for (auto& container : m_particles) {
+        for (auto & p : container.particles()) {
+            sf::Vector2f acceleration(
+                p.m_velosity.x * constant_resistance_factor,
+                p.m_velosity.y * constant_resistance_factor);
 
-        if (m_gravity_point.has_value()) {
-            auto grav_acc = *m_gravity_point - p.m_shape.position;
-            const auto mod = vec_mod(grav_acc);
-            normalize(grav_acc);
-            float effective_radius = 1000.f;
-            float coefficient = effective_radius - mod;
-            coefficient /= 13.f;
-            coefficient *= coefficient;
-            if (coefficient < 0.f) {
-                coefficient = 0.f;
+            if (m_gravity_point.has_value()) {
+                auto grav_acc = *m_gravity_point - p.m_shape.position;
+                const auto mod = vec_mod(grav_acc);
+                normalize(grav_acc);
+                float effective_radius = 1000.f;
+                float coefficient = effective_radius - mod;
+                coefficient /= 13.f;
+                coefficient *= coefficient;
+                if (coefficient < 0.f) {
+                    coefficient = 0.f;
+                }
+                grav_acc *= coefficient;
+                acceleration += grav_acc;
             }
-            grav_acc *= coefficient;
-            acceleration += grav_acc;
+            acceleration /= p.m_weight;
+            acceleration *= time_coef;
+
+            handle_border_crossing(p);
+            p.m_shape.position += (p.m_velosity * time_coef);
+            p.m_velosity += acceleration;
+
+            float velosity_mod = std::min(vec_mod(p.m_velosity), (max_color_velosity / p.m_weight));
+            uint8_t color_shift = std::round(255. * (velosity_mod / (max_color_velosity / p.m_weight)));
+
+            uint8_t red = color_shift;
+            uint8_t green = 255 - color_shift;
+            uint8_t blue = 20;
+            p.m_shape.color = sf::Color(red, green, blue, 120);
         }
-        acceleration /= p.m_weight;
-        acceleration *= time_coef;
-
-        handle_border_crossing(p);
-        p.m_shape.position += (p.m_velosity * time_coef);
-        p.m_velosity += acceleration;
-
-        float velosity_mod = std::min(vec_mod(p.m_velosity), (max_color_velosity / p.m_weight));
-        uint8_t color_shift = std::round(255. * (velosity_mod / (max_color_velosity / p.m_weight)));
-
-        uint8_t red = color_shift;
-        uint8_t green = 255 - color_shift;
-        uint8_t blue = 20;
-        p.m_shape.color = sf::Color(red, green, blue, 220);
     }
 }
 

@@ -6,7 +6,7 @@
 class ParticleFactory {
 public:
     ParticleFactory(const sf::Vector2f& pos_tl_border, const sf::Vector2f& pos_br_border);
-    Particle create_particle();
+    Particle create_particle(sf::Vertex & vertex); // TODO make it const
 
 private:
     Randomizer m_width_randomizer;

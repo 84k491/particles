@@ -8,10 +8,10 @@ ParticleFactory::ParticleFactory(const sf::Vector2f&, const sf::Vector2f& pos_br
 {
 }
 
-Particle ParticleFactory::create_particle()
+Particle ParticleFactory::create_particle(sf::Vertex & vertex)
 {
-    Particle particle;
-    particle.m_shape.position = sf::Vector2f(m_width_randomizer.random_value(), m_height_randomizer.random_value());
+    Particle particle(vertex);
+    vertex.position = sf::Vector2f(m_width_randomizer.random_value(), m_height_randomizer.random_value());
     particle.m_weight = m_weight_randomizer.random_value();
     // particle.m_velosity.x = m_velosity_randomizer.random_value();
     // particle.m_velosity.y = m_velosity_randomizer.random_value();

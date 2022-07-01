@@ -2,6 +2,7 @@
 
 #include "Particle.h"
 #include "ParticleFactory.h"
+#include "ParticlesContainer.h"
 
 #include <SFML/Graphics.hpp>
 #include <chrono>
@@ -18,7 +19,8 @@ enum class BorderCrossing {
 class PhysicsCore {
 public:
     static constexpr float max_color_velosity = 1400.f;
-    static constexpr size_t particle_amount_at_start = 10000;
+    static constexpr size_t particle_amount_at_start = 1'000'000;
+    static constexpr size_t calc_threads_count = 2;
     static constexpr unsigned window_margin_px = 5;
 
     PhysicsCore(const sf::Vector2f& window_br_border);
@@ -34,8 +36,7 @@ public: // TODO make private
     sf::Vector2f m_br_border;
     sf::Vector2f m_tl_border;
     sf::Vector2f m_window_br_border;
-    ParticleFactory m_factory;
-    std::vector<Particle> m_particles;
+    std::vector<ParticlesContainer> m_particles;
     std::optional<sf::Vector2f> m_gravity_point;
-    std::chrono::time_point<std::chrono::system_clock> m_previous_calculation;
+    std::chrono::time_point<std::chrono::system_clock> m_previous_calculation; // TODO add _time
 };
