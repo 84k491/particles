@@ -11,28 +11,6 @@
 
 // TODO handle window resize
 
-class Renderer {
-public:
-    Renderer(PhysicsCore& physics_core, sf::RenderWindow& window);
-    ~Renderer();
-
-    void start();
-    void stop();
-
-private:
-    void work();
-
-    void draw_particles();
-
-private:
-    PhysicsCore& m_physics_core;
-    sf::RenderWindow& m_window;
-    FpsCounter m_fps_counter;
-    std::unique_ptr<std::thread> m_worker;
-    // TODO use constexpr variable
-    std::array<sf::RenderTexture, 2> m_textures; // place it like levels, one on top of the other
-};
-
 class Application {
 public:
     Application();
@@ -40,8 +18,8 @@ public:
     void window_loop();
 
 private:
+    FpsCounter m_fps_counter;
     sf::RenderWindow m_window;
     PhysicsCore m_physics_core;
     EventHandler m_event_handler;
-    Renderer m_renderer;
 };

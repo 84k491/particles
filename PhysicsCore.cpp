@@ -17,12 +17,10 @@ constexpr float constant_resistance_factor = -2.f; // TODO move to header
 PhysicsCore::PhysicsCore(const sf::Vector2f& window_br_border)
     : m_br_border(sf::Vector2f(window_br_border.x - window_margin_px, window_br_border.y - window_margin_px))
     , m_tl_border(window_margin_px, window_margin_px)
+    , m_factory(m_tl_border, m_br_border)
     , m_window_br_border(window_br_border)
+    , m_particles(particle_amount_at_start, m_factory)
 {
-    ParticleFactory factory(m_tl_border, m_br_border);
-    for (size_t i = 0; i < calc_threads_count; ++i) {
-        m_particles.emplace_back(particle_amount_at_start / calc_threads_count, factory);
-    }
 }
 
 void PhysicsCore::calculate()
@@ -32,41 +30,39 @@ void PhysicsCore::calculate()
     float time_coef = time_diff.count();
     m_previous_calculation = now;
 
-    for (auto& container : m_particles) {
-        for (auto & p : container.particles()) {
-            sf::Vector2f acceleration(
-                p.m_velosity.x * constant_resistance_factor,
-                p.m_velosity.y * constant_resistance_factor);
+    for (auto & p : m_particles.particles()) {
+        sf::Vector2f acceleration(
+            p.m_velosity.x * constant_resistance_factor,
+            p.m_velosity.y * constant_resistance_factor);
 
-            if (m_gravity_point.has_value()) {
-                auto grav_acc = *m_gravity_point - p.m_shape.position;
-                const auto mod = vec_mod(grav_acc);
-                normalize(grav_acc);
-                float effective_radius = 1000.f;
-                float coefficient = effective_radius - mod;
-                coefficient /= 13.f;
-                coefficient *= coefficient;
-                if (coefficient < 0.f) {
-                    coefficient = 0.f;
-                }
-                grav_acc *= coefficient;
-                acceleration += grav_acc;
+        if (m_gravity_point.has_value()) {
+            auto grav_acc = *m_gravity_point - p.m_shape.position;
+            const auto mod = vec_mod(grav_acc);
+            normalize(grav_acc);
+            float effective_radius = 1000.f;
+            float coefficient = effective_radius - mod;
+            coefficient /= 13.f;
+            coefficient *= coefficient;
+            if (coefficient < 0.f) {
+                coefficient = 0.f;
             }
-            acceleration /= p.m_weight;
-            acceleration *= time_coef;
-
-            handle_border_crossing(p);
-            p.m_shape.position += (p.m_velosity * time_coef);
-            p.m_velosity += acceleration;
-
-            float velosity_mod = std::min(vec_mod(p.m_velosity), (max_color_velosity / p.m_weight));
-            uint8_t color_shift = std::round(255. * (velosity_mod / (max_color_velosity / p.m_weight)));
-
-            uint8_t red = color_shift;
-            uint8_t green = 255 - color_shift;
-            uint8_t blue = 20;
-            p.m_shape.color = sf::Color(red, green, blue, 120);
+            grav_acc *= coefficient;
+            acceleration += grav_acc;
         }
+        acceleration /= p.m_weight;
+        acceleration *= time_coef;
+
+        handle_border_crossing(p);
+        p.m_shape.position += (p.m_velosity * time_coef);
+        p.m_velosity += acceleration;
+
+        float velosity_mod = std::min(vec_mod(p.m_velosity), (max_color_velosity / p.m_weight));
+        uint8_t color_shift = std::round(255. * (velosity_mod / (max_color_velosity / p.m_weight)));
+
+        uint8_t red = color_shift;
+        uint8_t green = 255 - color_shift;
+        uint8_t blue = 20;
+        p.m_shape.color = sf::Color(red, green, blue, 120);
     }
 }
 
@@ -80,8 +76,7 @@ void PhysicsCore::on_mouse_event(bool is_pressed, float x, float y)
         return;
     }
 
-    // substraction needed because Y coordinate is inverted when drawing with texture
-    m_gravity_point = std::make_optional<sf::Vector2f>(x, m_window_br_border.y - y);
+    m_gravity_point = std::make_optional<sf::Vector2f>(x, y);
 }
 
 BorderCrossing PhysicsCore::if_out_of_borders(const Particle& p) const
