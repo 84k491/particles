@@ -4,8 +4,8 @@
 
 Application::Application()
     : m_window(sf::VideoMode(window_width, window_height), "Particle Sandbox") // TODO store window sizes as local cosnt
-    , m_physics_core(sf::Vector2f(window_width, window_height))
-    , m_event_handler(m_window, m_physics_core) // TODO unsafe access to physics core
+    , m_physics_core(particle_amount_at_start, sf::Vector2f(window_width, window_height), m_gravity_point)
+    , m_event_handler(m_window, m_gravity_point) // TODO unsafe access to physics core
 {
 }
 
@@ -39,5 +39,7 @@ void Application::window_loop()
     std::cout << "draw window avg time: " << window_draw_avg_counter.average() << "s" << std::endl;
     std::cout << "calculation avg time: " << calc_avg_counter.average() << "s" << std::endl;
     m_fps_counter.print_avg_fps();
+    std::cout << "velosity calculation average time: "<< m_physics_core.m_vel_calc_counter.average() << std::endl;
+    std::cout << "position calculation average time: " << m_physics_core.m_pos_calc_counter.average() << std::endl;
 
 }

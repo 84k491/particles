@@ -14,16 +14,17 @@ void normalize(sf::Vector2f& pt)
 
 constexpr float constant_resistance_factor = -2.f; // TODO move to header
 
-PhysicsCore::PhysicsCore(const sf::Vector2f& window_br_border)
+PhysicsCore::PhysicsCore(size_t particles_amount, const sf::Vector2f& window_br_border, GravityPoint & gravity_point)
     : m_br_border(sf::Vector2f(window_br_border.x - window_margin_px, window_br_border.y - window_margin_px))
     , m_tl_border(window_margin_px, window_margin_px)
     , m_factory(m_tl_border, m_br_border)
     , m_window_br_border(window_br_border)
-    , m_particles(particle_amount_at_start, m_factory)
+    , m_particles(particles_amount, m_factory)
+    , m_gravity_point(gravity_point.m_gravity_point)
 {
 }
 
-void PhysicsCore::calculate()
+void PhysicsCore::calculate_velosity()
 {
     const auto now = std::chrono::system_clock::now();
     std::chrono::duration<double> time_diff = now - m_previous_calculation;
@@ -53,20 +54,29 @@ void PhysicsCore::calculate()
         acceleration *= time_coef;
 
         handle_border_crossing(p);
-        p.m_shape.position += (p.m_velosity * time_coef);
         p.m_velosity += acceleration;
+        p.m_position_shift = p.m_velosity * time_coef;
 
         float velosity_mod = std::min(vec_mod(p.m_velosity), (max_color_velosity / p.m_weight));
-        uint8_t color_shift = std::round(255. * (velosity_mod / (max_color_velosity / p.m_weight)));
-
-        uint8_t red = color_shift;
-        uint8_t green = 255 - color_shift;
-        uint8_t blue = 20;
-        p.m_shape.color = sf::Color(red, green, blue, 120);
+        p.m_color_shift = std::round(255. * (velosity_mod / (max_color_velosity / p.m_weight)));
     }
 }
 
-void PhysicsCore::on_mouse_event(bool is_pressed, float x, float y)
+void PhysicsCore::calculate_position()
+{
+    constexpr uint8_t blue = 20;
+    constexpr uint8_t alpha = 120;
+
+    for (auto & p : m_particles.particles()) {
+        const uint8_t red = p.m_color_shift;
+        const uint8_t green = 255 - p.m_color_shift;
+
+        p.m_shape.position += (p.m_position_shift);
+        p.m_shape.color = sf::Color(red, green, blue, alpha);
+    }
+}
+
+void GravityPoint::on_mouse_event(bool is_pressed, float x, float y)
 {
     if (!is_pressed && m_gravity_point.has_value()) {
         m_gravity_point = {};
