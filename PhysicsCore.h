@@ -9,9 +9,10 @@
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <condition_variable>
+#include <iostream>
 #include <mutex>
 #include <optional>
-#include <iostream>
+#include <thread>
 
 enum class BorderCrossing {
     None,
@@ -21,7 +22,7 @@ enum class BorderCrossing {
     Left,
 };
 
-class GravityPoint
+class GravityPoint // TODO move it to a separate file
 {
 public:
     GravityPoint() {}
@@ -82,4 +83,6 @@ public:
 
     AverageCounter<double> m_vel_calc_counter;
     AverageCounter<double> m_pos_calc_counter;
+
+    std::thread m_worker;
 };

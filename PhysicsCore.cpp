@@ -21,6 +21,7 @@ PhysicsCore::PhysicsCore(size_t particles_amount, const sf::Vector2f& window_br_
     , m_window_br_border(window_br_border)
     , m_particles(particles_amount, m_factory)
     , m_gravity_point(gravity_point.m_gravity_point)
+    , m_worker([this]{ calculate(); })
 {
 }
 

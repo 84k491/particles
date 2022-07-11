@@ -5,7 +5,6 @@
 Application::Application()
     : m_window(sf::VideoMode(window_width, window_height), "Particle Sandbox") // TODO store window sizes as local cosnt
     , m_physics_core(particle_amount_at_start, sf::Vector2f(window_width, window_height), m_gravity_point)
-    , m_worker([this]() { m_physics_core.calculate(); })
     , m_event_handler(m_window, m_gravity_point) // TODO unsafe access to physics core
 {
 }
@@ -13,7 +12,7 @@ Application::Application()
 Application::~Application()
 {
     m_physics_core.m_thread_stopped = true;
-    m_worker.join();
+    m_physics_core.m_worker.join();
 }
 
 void Application::window_loop()

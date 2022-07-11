@@ -7,7 +7,6 @@
 #include <SFML/Graphics.hpp>
 
 #include <memory>
-#include <thread>
 
 // TODO handle window resize
 
@@ -27,6 +26,5 @@ private:
     sf::RenderWindow m_window;
     GravityPoint m_gravity_point;
     PhysicsCore m_physics_core;
-    std::thread m_worker;
     EventHandler m_event_handler;
 };
