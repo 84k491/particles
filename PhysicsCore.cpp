@@ -25,6 +25,16 @@ PhysicsCore::PhysicsCore(size_t particles_amount, const sf::Vector2f& window_br_
 {
 }
 
+PhysicsCore::~PhysicsCore()
+{
+    {
+        std::lock_guard l{m_calc_mutex};
+        m_need_calculation = true;
+    }
+    m_thread_stopped = true;
+    m_worker.join();
+}
+
 void PhysicsCore::calculate_velosity()
 {
     const auto now = std::chrono::system_clock::now();

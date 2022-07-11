@@ -36,6 +36,7 @@ public:
     static constexpr unsigned window_margin_px = 5;
 
     PhysicsCore(size_t particles_amount, const sf::Vector2f& window_br_border, GravityPoint & gravity_point);
+    ~PhysicsCore();
 
     void calculate()
     {
