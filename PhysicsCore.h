@@ -8,7 +8,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <chrono>
+#include <condition_variable>
+#include <mutex>
 #include <optional>
+#include <iostream>
 
 enum class BorderCrossing {
     None,
@@ -35,19 +38,40 @@ public:
 
     void calculate()
     {
+        // std::cout << "        physics core worker loop init" << std::endl;
         TimeCounter tc;
-        m_vel_calc_counter.push_value(tc.execution_time_in_sec([this]() { calculate_velosity(); }));
-        m_pos_calc_counter.push_value(tc.execution_time_in_sec([this]() { calculate_position(); }));
+        while (!m_thread_stopped) {
+            // std::cout << "        calculating velosity" << std::endl;
+            m_vel_calc_counter.push_value(tc.execution_time_in_sec([this]() { calculate_velosity(); }));
+
+            // std::cout << "        waiting for pos calculations to be needed" << std::endl;
+            std::unique_lock<std::mutex> ul{m_calc_mutex};
+            m_calc_cond_var.wait(ul, [this]{ return m_need_calculation; });
+
+            // std::cout << "        calculating positions" << std::endl;
+            m_pos_calc_counter.push_value(tc.execution_time_in_sec([this]() { calculate_position(); }));
+            // std::cout << "        about to notify that positions calculated" << std::endl;
+            m_need_calculation = false;
+            m_draw_cond_var.notify_all();
+
+            // std::cout << "        end of loop" << std::endl;
+        }
     }
+    void calculate_velosity();
+    void calculate_position();
 
 private:
     BorderCrossing if_out_of_borders(const Particle& p) const;
     void handle_border_crossing(Particle& p) const;
 
-    void calculate_velosity();
-    void calculate_position();
 
 public:
+    std::condition_variable m_calc_cond_var;
+    std::condition_variable m_draw_cond_var;
+    bool m_need_calculation = false;
+    std::mutex m_calc_mutex;
+    bool m_thread_stopped = false;
+
     sf::Vector2f m_br_border;
     sf::Vector2f m_tl_border;
     ParticleFactory m_factory;

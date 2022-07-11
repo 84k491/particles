@@ -11,10 +11,14 @@
 
 // TODO handle window resize
 
+//                 |*******calculate_velosity2******|
+// |*calc_pos2||dr||***calculate_velosity1**||cp1***|
+
 class Application {
     static constexpr size_t particle_amount_at_start = 1'000'000;
 public:
     Application();
+    ~Application();
 
     void window_loop();
 
@@ -23,5 +27,6 @@ private:
     sf::RenderWindow m_window;
     GravityPoint m_gravity_point;
     PhysicsCore m_physics_core;
+    std::thread m_worker;
     EventHandler m_event_handler;
 };
