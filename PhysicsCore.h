@@ -6,11 +6,11 @@
 #include "AverageCounter.h"
 #include "TimeCounter.h"
 #include "ICalculationsProvider.h"
+#include "GravityPoint.h"
 
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <iostream>
-#include <optional>
 #include <thread>
 
 enum class BorderCrossing {
@@ -19,14 +19,6 @@ enum class BorderCrossing {
     Bottom,
     Right,
     Left,
-};
-
-class GravityPoint // TODO move it to a separate file
-{
-public:
-    GravityPoint() {}
-    void on_mouse_event(bool is_pressed, float x, float y);
-    std::optional<sf::Vector2f> m_gravity_point; // TODO rename this or class
 };
 
 class PhysicsCore final : public ICalculationsProvider
@@ -48,7 +40,7 @@ private:
 
     const std::vector<sf::Vertex> & get_data() override { return m_particles.coordinates(); }
 
-public: // TODO make private
+private: // TODO make private
     bool m_thread_stopped = false; // TODO make atomic
 
     sf::Vector2f m_br_border;

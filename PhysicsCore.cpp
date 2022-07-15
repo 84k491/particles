@@ -97,19 +97,6 @@ void PhysicsCore::calculate_position()
     }
 }
 
-void GravityPoint::on_mouse_event(bool is_pressed, float x, float y)
-{
-    if (!is_pressed && m_gravity_point.has_value()) {
-        m_gravity_point = {};
-        return;
-    }
-    if (!is_pressed) {
-        return;
-    }
-
-    m_gravity_point = std::make_optional<sf::Vector2f>(x, y);
-}
-
 BorderCrossing PhysicsCore::if_out_of_borders(const Particle& p) const
 {
     const auto& pos = p.m_shape.position;
