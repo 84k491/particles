@@ -3,8 +3,7 @@
 #include "AverageCounter.h"
 
 Application::Application()
-    : m_window(sf::VideoMode(window_width, window_height), "Particle Sandbox") // TODO store window sizes as local cosnt
-    // , m_physics_core(particle_amount_at_start, sf::Vector2f(window_width, window_height), m_gravity_point)
+    : m_window(sf::VideoMode(window_width, window_height), "Particle Sandbox")
     , m_event_handler(m_window, m_gravity_point) // TODO unsafe access to physics core
 {
     for (size_t i = 0; i < cores_amount; ++i) {
@@ -13,14 +12,6 @@ Application::Application()
                 particle_amount_at_start / cores_amount,
                 sf::Vector2f(window_width, window_height),
                 m_gravity_point));
-    }
-}
-
-Application::~Application()
-{
-    // TODO do i need it at all??
-    for (auto & ptr : m_physics_cores) {
-        ptr.reset();
     }
 }
 

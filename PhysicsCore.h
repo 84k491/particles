@@ -9,6 +9,7 @@
 #include "GravityPoint.h"
 
 #include <SFML/Graphics.hpp>
+#include <atomic>
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -40,8 +41,8 @@ private:
 
     const std::vector<sf::Vertex> & get_data() override { return m_particles.coordinates(); }
 
-private: // TODO make private
-    bool m_thread_stopped = false; // TODO make atomic
+private:
+    std::atomic_bool m_thread_stopped = false; // TODO try different memory order
 
     sf::Vector2f m_br_border;
     sf::Vector2f m_tl_border;

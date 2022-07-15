@@ -19,6 +19,3 @@ private:
     std::mt19937 m_generator;
     std::uniform_real_distribution<float> m_distribution;
 };
-
-constexpr size_t window_width = 1280;
-constexpr size_t window_height = 960;
