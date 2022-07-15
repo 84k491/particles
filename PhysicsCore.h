@@ -5,12 +5,11 @@
 #include "ParticlesContainer.h"
 #include "AverageCounter.h"
 #include "TimeCounter.h"
+#include "ICalculationsProvider.h"
 
 #include <SFML/Graphics.hpp>
 #include <chrono>
-#include <condition_variable>
 #include <iostream>
-#include <mutex>
 #include <optional>
 #include <thread>
 
@@ -30,7 +29,8 @@ public:
     std::optional<sf::Vector2f> m_gravity_point; // TODO rename this or class
 };
 
-class PhysicsCore {
+class PhysicsCore final : public ICalculationsProvider
+{
 public:
     static constexpr float max_color_velosity = 1400.f;
     static constexpr unsigned window_margin_px = 5;
@@ -38,41 +38,18 @@ public:
     PhysicsCore(size_t particles_amount, const sf::Vector2f& window_br_border, GravityPoint & gravity_point);
     ~PhysicsCore();
 
-    void calculate()
-    {
-        // std::cout << "        physics core worker loop init" << std::endl;
-        TimeCounter tc;
-        while (!m_thread_stopped) {
-            // std::cout << "        calculating velosity" << std::endl;
-            m_vel_calc_counter.push_value(tc.execution_time_in_sec([this]() { calculate_velosity(); }));
-
-            // std::cout << "        waiting for pos calculations to be needed" << std::endl;
-            std::unique_lock<std::mutex> ul{m_calc_mutex};
-            m_calc_cond_var.wait(ul, [this]{ return m_need_calculation; });
-
-            // std::cout << "        calculating positions" << std::endl;
-            m_pos_calc_counter.push_value(tc.execution_time_in_sec([this]() { calculate_position(); }));
-            // std::cout << "        about to notify that positions calculated" << std::endl;
-            m_need_calculation = false;
-            m_draw_cond_var.notify_all();
-
-            // std::cout << "        end of loop" << std::endl;
-        }
-    }
+private:
+    void calculate();
     void calculate_velosity();
     void calculate_position();
 
-private:
     BorderCrossing if_out_of_borders(const Particle& p) const;
     void handle_border_crossing(Particle& p) const;
 
+    const std::vector<sf::Vertex> & get_data() override { return m_particles.coordinates(); }
 
-public:
-    std::condition_variable m_calc_cond_var;
-    std::condition_variable m_draw_cond_var;
-    bool m_need_calculation = false;
-    std::mutex m_calc_mutex;
-    bool m_thread_stopped = false;
+public: // TODO make private
+    bool m_thread_stopped = false; // TODO make atomic
 
     sf::Vector2f m_br_border;
     sf::Vector2f m_tl_border;

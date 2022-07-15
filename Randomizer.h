@@ -2,6 +2,7 @@
 
 #include <random>
 
+// TODO add lower bound
 class Randomizer // TODO make mutable??
 {
 public:

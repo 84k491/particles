@@ -10,9 +10,6 @@
 
 // TODO handle window resize
 
-//                 |*******calculate_velosity2******|
-// |*calc_pos2||dr||***calculate_velosity1**||cp1***|
-
 class Application {
     static constexpr size_t particle_amount_at_start = 1'000'000;
     static constexpr size_t cores_amount = 2;

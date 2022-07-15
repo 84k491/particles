@@ -1,5 +1,6 @@
 #include "PhysicsCore.h"
 
+// TODO move those functions to the header
 float vec_mod(const sf::Vector2f& pt)
 {
     return std::sqrt(pt.x * pt.x + pt.y * pt.y);
@@ -27,12 +28,21 @@ PhysicsCore::PhysicsCore(size_t particles_amount, const sf::Vector2f& window_br_
 
 PhysicsCore::~PhysicsCore()
 {
-    {
-        std::lock_guard l{m_calc_mutex};
-        m_need_calculation = true;
-    }
+    request();
     m_thread_stopped = true;
     m_worker.join();
+}
+
+void PhysicsCore::calculate()
+{
+    TimeCounter tc;
+    while (!m_thread_stopped) {
+        m_vel_calc_counter.push_value(tc.execution_time_in_sec([this]() { calculate_velosity(); }));
+
+        wait_for_request_and_do([&](){
+            m_pos_calc_counter.push_value(tc.execution_time_in_sec([this]() { calculate_position(); }));
+        });
+    }
 }
 
 void PhysicsCore::calculate_velosity()
@@ -68,22 +78,22 @@ void PhysicsCore::calculate_velosity()
         p.m_velosity += acceleration;
         p.m_position_shift = p.m_velosity * time_coef;
 
-        float velosity_mod = std::min(vec_mod(p.m_velosity), (max_color_velosity / p.m_weight));
-        p.m_color_shift = std::round(255. * (velosity_mod / (max_color_velosity / p.m_weight)));
+        // float velosity_mod = std::min(vec_mod(p.m_velosity), (max_color_velosity / p.m_weight));
+        // p.m_color_shift = std::round(255. * (velosity_mod / (max_color_velosity / p.m_weight)));
     }
 }
 
 void PhysicsCore::calculate_position()
 {
-    constexpr uint8_t blue = 20;
-    constexpr uint8_t alpha = 120;
+    // constexpr uint8_t blue = 20;
+    // constexpr uint8_t alpha = 120;
 
     for (auto & p : m_particles.particles()) {
-        const uint8_t red = p.m_color_shift;
-        const uint8_t green = 255 - p.m_color_shift;
+        // const uint8_t red = p.m_color_shift;
+        // const uint8_t green = 255 - p.m_color_shift;
 
         p.m_shape.position += (p.m_position_shift);
-        p.m_shape.color = sf::Color(red, green, blue, alpha);
+        // p.m_shape.color = sf::Color(red, green, blue, alpha);
     }
 }
 
