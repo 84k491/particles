@@ -1,7 +1,7 @@
 #include "EventHandler.h"
 #include "PhysicsCore.h"
 
-EventHandler::EventHandler(sf::RenderWindow& window, GravityPoint& mouse_listener)
+EventHandler::EventHandler(sf::RenderWindow& window, IMouseListener& mouse_listener)
     : m_window(window)
     , m_mouse_listener(mouse_listener)
 {

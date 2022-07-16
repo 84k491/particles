@@ -2,13 +2,16 @@
 
 void GravityPoint::on_mouse_event(bool is_pressed, float x, float y)
 {
-    if (!is_pressed && m_gravity_point.has_value()) {
-        m_gravity_point = {};
-        return;
-    }
-    if (!is_pressed) {
-        return;
+    m_is_active.store(is_pressed);
+    m_x_pos.store(x);
+    m_y_pos.store(y);
+}
+
+std::optional<sf::Vector2f> GravityPoint::point() const
+{
+    if (!m_is_active.load()) {
+        return std::nullopt;
     }
 
-    m_gravity_point = std::make_optional<sf::Vector2f>(x, y);
+    return std::make_optional(sf::Vector2f(m_x_pos.load(), m_y_pos.load()));
 }

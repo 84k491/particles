@@ -22,6 +22,7 @@ enum class BorderCrossing {
     Left,
 };
 
+class GravityPoint;
 class PhysicsCore final : public ICalculationsProvider
 {
 public:
@@ -49,7 +50,7 @@ private:
     ParticleFactory m_factory;
     sf::Vector2f m_window_br_border;
     ParticlesContainer m_particles;
-    std::optional<sf::Vector2f> & m_gravity_point;
+    GravityPoint & m_gravity_point;
     std::chrono::time_point<std::chrono::system_clock> m_previous_calculation; // TODO add _time
 
     AverageCounter<double> m_vel_calc_counter;

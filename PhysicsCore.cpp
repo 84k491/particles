@@ -1,4 +1,5 @@
 #include "PhysicsCore.h"
+#include "GravityPoint.h"
 
 // TODO move those functions to the header
 float vec_mod(const sf::Vector2f& pt)
@@ -21,7 +22,7 @@ PhysicsCore::PhysicsCore(size_t particles_amount, const sf::Vector2f& window_br_
     , m_factory(m_tl_border, m_br_border)
     , m_window_br_border(window_br_border)
     , m_particles(particles_amount, m_factory)
-    , m_gravity_point(gravity_point.m_gravity_point)
+    , m_gravity_point(gravity_point)
     , m_worker([this]{ calculate(); })
 {
 }
@@ -52,13 +53,15 @@ void PhysicsCore::calculate_velosity()
     float time_coef = time_diff.count();
     m_previous_calculation = now;
 
+    const auto gravity_point = m_gravity_point.point();
+
     for (auto & p : m_particles.particles()) {
         sf::Vector2f acceleration(
             p.m_velosity.x * constant_resistance_factor,
             p.m_velosity.y * constant_resistance_factor);
 
-        if (m_gravity_point.has_value()) {
-            auto grav_acc = *m_gravity_point - p.m_shape.position;
+        if (gravity_point.has_value()) {
+            auto grav_acc = *gravity_point - p.m_shape.position;
             const auto mod = vec_mod(grav_acc);
             normalize(grav_acc);
             float effective_radius = 1000.f;
@@ -77,23 +80,13 @@ void PhysicsCore::calculate_velosity()
         handle_border_crossing(p);
         p.m_velosity += acceleration;
         p.m_position_shift = p.m_velosity * time_coef;
-
-        // float velosity_mod = std::min(vec_mod(p.m_velosity), (max_color_velosity / p.m_weight));
-        // p.m_color_shift = std::round(255. * (velosity_mod / (max_color_velosity / p.m_weight)));
     }
 }
 
 void PhysicsCore::calculate_position()
 {
-    // constexpr uint8_t blue = 20;
-    // constexpr uint8_t alpha = 120;
-
     for (auto & p : m_particles.particles()) {
-        // const uint8_t red = p.m_color_shift;
-        // const uint8_t green = 255 - p.m_color_shift;
-
         p.m_shape.position += (p.m_position_shift);
-        // p.m_shape.color = sf::Color(red, green, blue, alpha);
     }
 }
 
