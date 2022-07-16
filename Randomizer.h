@@ -3,7 +3,7 @@
 #include <random>
 
 // TODO add lower bound
-class Randomizer // TODO make mutable??
+class Randomizer
 {
 public:
     Randomizer(float upper_bound)
@@ -12,10 +12,10 @@ public:
     {
     }
 
-    float random_value() { return m_distribution(m_generator); }
+    float random_value() const { return m_distribution(m_generator); }
 
 private:
     std::random_device m_random_device;
-    std::mt19937 m_generator;
-    std::uniform_real_distribution<float> m_distribution;
+    mutable std::mt19937 m_generator;
+    mutable std::uniform_real_distribution<float> m_distribution;
 };

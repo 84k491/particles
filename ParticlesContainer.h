@@ -1,14 +1,14 @@
 #pragma once
 
+#include "IParticleGenerator.h"
 #include "Particle.h"
 
 #include <SFML/Graphics.hpp>
 
-class ParticleFactory;
 class ParticlesContainer
 {
 public:
-    ParticlesContainer(size_t size, ParticleFactory & generator); // TODO use interface
+    ParticlesContainer(size_t size, IParticleGenerator & generator);
 
     void push_back(Particle && p);
 

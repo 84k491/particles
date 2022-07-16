@@ -1,8 +1,7 @@
 #include "ParticlesContainer.h"
-#include "ParticleFactory.h"
+#include <iostream>
 
-
-ParticlesContainer::ParticlesContainer(size_t size, ParticleFactory & generator)
+ParticlesContainer::ParticlesContainer(size_t size, IParticleGenerator & generator)
 {
     m_coordinates.resize(size);
     m_particles.reserve(size);

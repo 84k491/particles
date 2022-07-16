@@ -9,7 +9,7 @@ ParticleFactory::ParticleFactory(const sf::Vector2f&, const sf::Vector2f& pos_br
 {
 }
 
-Particle ParticleFactory::create_particle(sf::Vertex & vertex)
+Particle ParticleFactory::create_particle(sf::Vertex & vertex) const
 {
     Particle particle(vertex);
     vertex.position = sf::Vector2f(m_width_randomizer.random_value(), m_height_randomizer.random_value());
