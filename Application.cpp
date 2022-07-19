@@ -20,13 +20,18 @@ Application::Application()
 
 void Application::window_loop()
 {
+    TimeCounter tc;
+    AverageCounter<double> draw_time_counter;
     while (m_window.isOpen()) {
         m_event_handler.handle_events();
         m_window.clear(sf::Color(0, 0, 0, 255));
 
         for (const auto & core : m_physics_cores) {
-            core->wait_for_calculation_and_do([this](const auto & vec) {
-                m_window.draw(vec.data(), vec.size(), sf::Points);
+            core->wait_for_calculation_and_do([&](const auto & vec) {
+                const auto draw_time = tc.execution_time_in_sec([&](){
+                    m_window.draw(vec.data(), vec.size(), sf::Points);
+                });
+                draw_time_counter.push_value(draw_time);
             });
             core->request();
         }
@@ -34,5 +39,5 @@ void Application::window_loop()
         m_fps_counter.on_frame_draw();
     }
     m_fps_counter.print_avg_fps();
-
+    std::cout << "Average draw time: " << draw_time_counter.average() << std::endl;
 }

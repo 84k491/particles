@@ -44,6 +44,8 @@ void PhysicsCore::calculate()
             m_pos_calc_counter.push_value(tc.execution_time_in_sec([this]() { calculate_position(); }));
         });
     }
+    std::cout << "Average velocity calculation time: " << m_vel_calc_counter.average() << std::endl;
+    std::cout << "Average position calculation time: " << m_pos_calc_counter.average() << std::endl;
 }
 
 void PhysicsCore::calculate_velosity()
