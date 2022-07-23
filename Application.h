@@ -11,8 +11,8 @@
 // TODO handle window resize
 
 class Application {
-    static constexpr size_t particle_amount_at_start = 1'000'000;
-    static constexpr size_t cores_amount = 2;
+    static constexpr size_t particle_amount_at_start = 500'000;
+    static constexpr size_t cores_amount = 1;
 
     static constexpr size_t window_width = 1280;
     static constexpr size_t window_height = 960;

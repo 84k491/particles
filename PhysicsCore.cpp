@@ -7,9 +7,8 @@ float vec_mod(const sf::Vector2f& pt)
     return std::sqrt(pt.x * pt.x + pt.y * pt.y);
 }
 
-void normalize(sf::Vector2f& pt)
+void normalize(sf::Vector2f& pt, float mod)
 {
-    const auto mod = vec_mod(pt);
     pt.x /= mod;
     pt.y /= mod;
 }
@@ -65,8 +64,8 @@ void PhysicsCore::calculate_velosity()
         if (gravity_point.has_value()) {
             auto grav_acc = *gravity_point - p.m_shape.position;
             const auto mod = vec_mod(grav_acc);
-            normalize(grav_acc);
-            float effective_radius = 1000.f;
+            normalize(grav_acc, mod);
+            constexpr float effective_radius = 1000.f;
             float coefficient = effective_radius - mod;
             coefficient /= 13.f;
             coefficient *= coefficient;
