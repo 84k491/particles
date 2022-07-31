@@ -5,5 +5,5 @@
 class IParticleGenerator
 {
 public:
-    virtual Particle create_particle(sf::Vertex & vertex) const = 0;
+    virtual Particle create_particle(const sf::Vector2f & point, sf::Vertex & vertex) const = 0;
 };

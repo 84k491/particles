@@ -10,9 +10,13 @@
 
 // TODO handle window resize
 
-class Application {
-    static constexpr size_t particle_amount_at_start = 500'000;
-    static constexpr size_t cores_amount = 1;
+class Application final
+    : public IMouseListener
+    , public IChunkGenerator
+{
+    // static constexpr size_t particle_amount_at_start = 500'000;
+    // static constexpr size_t cores_amount = 1;
+    static constexpr size_t chunk_size = 64;
 
     static constexpr size_t window_width = 1280;
     static constexpr size_t window_height = 960;
@@ -21,9 +25,14 @@ public:
     void window_loop();
 
 private:
+    void on_mouse_event(bool is_pressed, float x, float y) override;
+    void on_particle_died(const sf::Vector2f & point) override;
+
+private:
     FpsCounter m_fps_counter;
     sf::RenderWindow m_window;
-    GravityPoint m_gravity_point;
+    ParticleFactory m_factory;
+    ParticlesContainer m_particles;
     std::vector<std::unique_ptr<PhysicsCore>> m_physics_cores;
     EventHandler m_event_handler;
 };
