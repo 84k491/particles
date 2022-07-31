@@ -6,6 +6,8 @@ ParticleFactory::ParticleFactory()
     // , m_height_randomizer(pos_br_border.y) // TODO use top border too!
     // : m_weight_randomizer(1.5f)
     : m_velosity_randomizer(300.f)
+    , m_livetime_randomizer(2000.f)
+    , m_color_randomizer(255.f)
 {
 }
 
@@ -18,13 +20,14 @@ Particle ParticleFactory::create_particle(const sf::Vector2f & point, sf::Vertex
         m_sign_randomizer.random_sign() * m_velosity_randomizer.random_value(),
         m_sign_randomizer.random_sign() * m_velosity_randomizer.random_value());
 
-    constexpr uint8_t red = 255;
-    constexpr uint8_t green = 0;
-    constexpr uint8_t blue = 125;
+    const uint8_t red = std::lround(m_color_randomizer.random_value());
+    const uint8_t green = std::lround(m_color_randomizer.random_value());
+    constexpr uint8_t blue = 225;
     constexpr uint8_t alpha = 255;
     vertex.color = sf::Color(red, green, blue, alpha);
 
-    particle.m_time_to_die = std::chrono::system_clock::now() + std::chrono::seconds(1); // TODO randomize
+    particle.m_time_to_die = std::chrono::system_clock::now() +
+        std::chrono::milliseconds(1000 + std::lround(m_livetime_randomizer.random_value()));
 
     return particle;
 }

@@ -26,7 +26,7 @@ public:
 
 private:
     void on_mouse_event(bool is_pressed, float x, float y) override;
-    void on_particle_died(const sf::Vector2f & point) override;
+    void on_particle_died(const ParticlesChunk & chunk, const sf::Vector2f & point) override;
 
 private:
     FpsCounter m_fps_counter;
@@ -35,4 +35,5 @@ private:
     ParticlesContainer m_particles;
     std::vector<std::unique_ptr<PhysicsCore>> m_physics_cores;
     EventHandler m_event_handler;
+    CoinFlipRandomizer m_coin_flip;
 };

@@ -46,7 +46,9 @@ void Application::on_mouse_event(bool is_pressed, float x, float y)
     m_particles.new_chunk(sf::Vector2f(x, y));
 }
 
-void Application::on_particle_died(const sf::Vector2f &)
+void Application::on_particle_died(const ParticlesChunk & chunk, const sf::Vector2f & point)
 {
-    // m_particles.new_chunk(point);
+    if (0 == chunk.alive_count() && m_coin_flip.value()) {
+        m_particles.new_chunk(point);
+    }
 }

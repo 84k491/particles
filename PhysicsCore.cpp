@@ -56,7 +56,7 @@ void PhysicsCore::calculate()
         }
         for (auto * p : dead_particles) {
             chunk.mark_as_dead(*p);
-            m_chunk_generator.on_particle_died(p->shape().position);
+            m_chunk_generator.on_particle_died(chunk, p->shape().position);
         }
     });
 }

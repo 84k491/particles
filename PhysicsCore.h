@@ -22,10 +22,10 @@ enum class BorderCrossing {
     Left,
 };
 
-class IChunkGenerator // TODO move it to factory
+class IChunkGenerator // TODO move it to factory ?
 {
 public:
-    virtual void on_particle_died(const sf::Vector2f & point) = 0;
+    virtual void on_particle_died(const ParticlesChunk & chunk, const sf::Vector2f & point) = 0;
 };
 
 class PhysicsCore final// : public ICalculationsProvider
@@ -33,8 +33,8 @@ class PhysicsCore final// : public ICalculationsProvider
 public:
     static constexpr float max_color_velosity = 1400.f;
     static constexpr unsigned window_margin_px = 5;
-    static constexpr float gravity_coef = 9.f;
-    static constexpr float constant_resistance_factor = -2.f;
+    static constexpr float gravity_coef = 90.f;
+    // static constexpr float constant_resistance_factor = -2.f;
 
     PhysicsCore(
         ParticlesContainer & particles,
@@ -47,8 +47,6 @@ private:
 
     BorderCrossing if_out_of_borders(const Particle& p) const;
     void handle_border_crossing(Particle& p) const;
-
-    // const std::vector<sf::Vertex> & get_data() override { return m_particles.coordinates(); }
 
 private:
     std::atomic_bool m_thread_stopped = false; // TODO try different memory order

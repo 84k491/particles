@@ -12,7 +12,9 @@ class ParticlesChunk // TODO rename module
 {
     friend class ParticlesContainer;
 public:
-    ParticlesChunk(const sf::Vector2f & point, size_t size, IParticleGenerator & generator);
+    ParticlesChunk(size_t size, IParticleGenerator & generator); // TODO move size to compile time?
+
+    void initialize(const sf::Vector2f & point);
 
     auto & particles() { return m_particles; }
     const auto & coordinates() const { return m_coordinates; }
@@ -27,6 +29,8 @@ private:
     std::vector<Particle> m_particles;
     std::vector<sf::Vertex> m_coordinates;
 
+    IParticleGenerator & m_particle_generator;
+
     mutable std::mutex m_mutex;
 };
 
@@ -39,12 +43,11 @@ public:
     {
     }
 
-    void new_chunk(const sf::Vector2f & pt);
+    void new_chunk(const sf::Vector2f & pt); // TODO rename
     void for_each_chunk(std::function<void(ParticlesChunk &)> && callback);
 
 private:
     const size_t m_chunk_size = 0;
     IParticleGenerator & m_particle_generator;
     std::list<ParticlesChunk> m_chunks;
-    std::mutex m_list_mutex;
 };
