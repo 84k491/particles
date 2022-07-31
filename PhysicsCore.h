@@ -36,7 +36,6 @@ public:
     static constexpr float gravity_coef = 9.f;
     static constexpr float constant_resistance_factor = -2.f;
 
-
     PhysicsCore(
         ParticlesContainer & particles,
         IChunkGenerator & chunk_generator,
@@ -60,7 +59,7 @@ private:
     std::chrono::time_point<std::chrono::system_clock> m_previous_calculation; // TODO add _time
 
     ParticlesContainer & m_particles;
-    IChunkGenerator & m_chung_generator;
+    IChunkGenerator & m_chunk_generator;
 
     AverageCounter<double> m_vel_calc_counter;
     AverageCounter<double> m_pos_calc_counter;

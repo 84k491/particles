@@ -6,6 +6,10 @@
 class Randomizer
 {
 public:
+    Randomizer()
+    {
+    }
+
     Randomizer(float upper_bound)
         : m_generator(m_random_device())
         , m_distribution(1.f, upper_bound)

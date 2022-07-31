@@ -46,7 +46,7 @@ void Application::on_mouse_event(bool is_pressed, float x, float y)
     m_particles.new_chunk(sf::Vector2f(x, y));
 }
 
-void Application::on_particle_died(const sf::Vector2f & point)
+void Application::on_particle_died(const sf::Vector2f &)
 {
-    m_particles.new_chunk(point);
+    // m_particles.new_chunk(point);
 }

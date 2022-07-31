@@ -21,15 +21,15 @@ PhysicsCore::PhysicsCore(
     , m_tl_border(window_margin_px, window_margin_px)
     , m_window_br_border(window_br_border)
     , m_particles(particles)
-    , m_chung_generator(chunk_generator)
-    // , m_worker([this]{ calculate(); })
+    , m_chunk_generator(chunk_generator)
+    , m_worker([this]{ while (!m_thread_stopped) { calculate(); } })
 {
 }
 
 PhysicsCore::~PhysicsCore()
 {
-    // m_thread_stopped = true;
-    // m_worker.join();
+    m_thread_stopped = true;
+    m_worker.join();
 }
 
 void PhysicsCore::calculate()
@@ -40,7 +40,6 @@ void PhysicsCore::calculate()
     m_previous_calculation = now;
 
     std::vector<Particle *> dead_particles;
-    // dead_particles.reserve(chunk_size); // TODO
 
     sf::Vector2f gravity_acceleration(0, gravity_coef);
     m_particles.for_each_chunk([&](auto & chunk) {
@@ -52,13 +51,12 @@ void PhysicsCore::calculate()
             }
             p.m_velosity += gravity_acceleration * time_coef;
 
-            // std::lock_guard l{m_mutex}; // TODO
             p.shape().position += (p.m_velosity * time_coef);
             handle_border_crossing(p);
         }
         for (auto * p : dead_particles) {
             chunk.mark_as_dead(*p);
-            m_chung_generator.on_particle_died(p->shape().position);
+            m_chunk_generator.on_particle_died(p->shape().position);
         }
     });
 }
