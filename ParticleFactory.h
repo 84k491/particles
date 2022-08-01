@@ -4,33 +4,6 @@
 #include "Randomizer.h"
 #include "IParticleGenerator.h"
 
-class CoinFlipRandomizer
-{
-public:
-    CoinFlipRandomizer()
-        : m_randomizer(3.f)
-    {
-    }
-
-    bool value() const { return m_randomizer.random_value() > 2.f; }
-
-private:
-    Randomizer m_randomizer;
-};
-
-class SignRandomizer // TODO make something more accurate?
-{
-public:
-    SignRandomizer()
-    {
-    }
-
-    int random_sign() const { return m_randomizer.value() ? 1 : -1; }
-
-private:
-    CoinFlipRandomizer m_randomizer;
-};
-
 class ParticlesChunk;
 class ParticleFactory final : public IParticleGenerator{
 public:

@@ -6,6 +6,7 @@ Application::Application()
     : m_window(sf::VideoMode(window_width, window_height), "Particle Sandbox")
     , m_particles(chunk_size)
     , m_event_handler(m_window, *this)
+    , m_spawn_randomizer(.01f)
 {
     m_window.setFramerateLimit(60);
     m_physics_cores.emplace_back(std::make_unique<PhysicsCore>(
@@ -47,9 +48,9 @@ void Application::on_mouse_event(bool is_pressed, float x, float y)
     m_factory.fill_chunk(m_particles.new_chunk(), sf::Vector2f(x, y));
 }
 
-void Application::on_particle_died(const ParticlesChunk & chunk, const sf::Vector2f & point)
+void Application::on_particle_died(const ParticlesChunk &, const sf::Vector2f & point)
 {
-    if (0 == chunk.alive_count() && m_coin_flip.value()) {
+    if (m_spawn_randomizer.value()) {
         m_factory.fill_chunk(m_particles.new_chunk(), point);
     }
 }

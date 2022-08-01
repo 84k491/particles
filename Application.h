@@ -33,5 +33,5 @@ private:
     ParticlesContainer m_particles;
     std::vector<std::unique_ptr<PhysicsCore>> m_physics_cores;
     EventHandler m_event_handler;
-    CoinFlipRandomizer m_coin_flip;
+    ProbabilityRandomizer m_spawn_randomizer;
 };
