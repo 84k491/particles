@@ -31,10 +31,13 @@ private:
     CoinFlipRandomizer m_randomizer;
 };
 
+class ParticlesChunk;
 class ParticleFactory final : public IParticleGenerator{
 public:
     ParticleFactory();
     Particle create_particle(const sf::Vector2f & point, sf::Vertex & vertex) const override;
+
+    void fill_chunk(ParticlesChunk & chunk, const sf::Vector2f & point);
 
 private:
     // Randomizer m_width_randomizer;

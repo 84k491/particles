@@ -1,5 +1,5 @@
 #include "ParticleFactory.h"
-#include <iostream>
+#include "ParticlesContainer.h"
 
 ParticleFactory::ParticleFactory()
     // : m_width_randomizer(pos_br_border.x) // TODO use left border too!
@@ -30,4 +30,16 @@ Particle ParticleFactory::create_particle(const sf::Vector2f & point, sf::Vertex
         std::chrono::milliseconds(1000 + std::lround(m_livetime_randomizer.random_value()));
 
     return particle;
+}
+
+void ParticleFactory::fill_chunk(ParticlesChunk & chunk, const sf::Vector2f & point)
+{
+    chunk.particles().clear();
+    chunk.particles().reserve(chunk.total_size());
+
+    for (size_t i = 0; i < chunk.total_size(); ++i) {
+        chunk.particles().emplace_back(create_particle(point, chunk.m_coordinates[i]));
+    }
+
+    chunk.m_alive_count = chunk.total_size();
 }

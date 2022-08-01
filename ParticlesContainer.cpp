@@ -1,25 +1,12 @@
 #include "ParticlesContainer.h"
 #include <iostream>
 
-ParticlesChunk::ParticlesChunk(size_t size, IParticleGenerator & generator)
-    : m_particle_generator(generator)
+ParticlesChunk::ParticlesChunk(size_t size)
 {
     m_coordinates.resize(size);
 }
 
-void ParticlesChunk::initialize(const sf::Vector2f & point)
-{
-    m_particles.clear();
-    m_particles.reserve(m_coordinates.size());
-
-    for (size_t i = 0; i < m_coordinates.size(); ++i) {
-        m_particles.emplace_back(m_particle_generator.create_particle(point, m_coordinates[i]));
-    }
-
-    m_alive_count = m_coordinates.size();
-}
-
-void ParticlesContainer::new_chunk(const sf::Vector2f & pt)
+ParticlesChunk & ParticlesContainer::new_chunk()
 {
     auto result_chunk = m_chunks.end();
     for (auto it = m_chunks.begin(), end = m_chunks.end(); it != end; ++it) {
@@ -29,10 +16,11 @@ void ParticlesContainer::new_chunk(const sf::Vector2f & pt)
         }
     }
     if (result_chunk == m_chunks.end()) {
-        result_chunk = m_chunks.emplace(m_chunks.end(), m_chunk_size, m_particle_generator);
+        result_chunk = m_chunks.emplace(m_chunks.end(), m_chunk_size);
         std::cout << "Chunks size = " << m_chunks.size() << std::endl;
     }
-    result_chunk->initialize(pt);
+
+    return *result_chunk;
 }
 
 void ParticlesContainer::for_each_chunk(std::function<void(ParticlesChunk &)> && callback)
