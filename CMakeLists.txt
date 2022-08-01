@@ -10,7 +10,7 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 file(GLOB particles_SRC "*.cpp")
 add_executable(Particles ${particles_SRC})
-target_compile_options(Particles PRIVATE "-Ofast" "-Wall" "-Wpedantic" "-Werror" "-Wextra")
+target_compile_options(Particles PRIVATE "-g" "-Og" "-Wall" "-Wpedantic" "-Werror" "-Wextra")
 
 set_target_properties(Particles PROPERTIES CXX_STANDARD 17)
 

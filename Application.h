@@ -14,8 +14,6 @@ class Application final
     : public IMouseListener
     , public IChunkGenerator
 {
-    // static constexpr size_t particle_amount_at_start = 500'000;
-    // static constexpr size_t cores_amount = 1;
     static constexpr size_t chunk_size = 64;
 
     static constexpr size_t window_width = 1280;

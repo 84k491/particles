@@ -12,7 +12,7 @@ class ParticlesChunk // TODO rename module
 {
     friend class ParticlesContainer;
 public:
-    ParticlesChunk(size_t size, IParticleGenerator & generator); // TODO move size to compile time?
+    ParticlesChunk(size_t size, IParticleGenerator & generator);
 
     void initialize(const sf::Vector2f & point);
 

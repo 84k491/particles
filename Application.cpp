@@ -7,6 +7,7 @@ Application::Application()
     , m_particles(chunk_size, m_factory)
     , m_event_handler(m_window, *this)
 {
+    m_window.setFramerateLimit(60);
     m_physics_cores.emplace_back(std::make_unique<PhysicsCore>(
         m_particles,
         *this,
