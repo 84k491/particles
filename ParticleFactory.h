@@ -13,9 +13,6 @@ public:
     void fill_chunk(ParticlesChunk & chunk, const sf::Vector2f & point);
 
 private:
-    // Randomizer m_width_randomizer;
-    // Randomizer m_height_randomizer;
-    // Randomizer m_weight_randomizer;
     Randomizer m_velosity_randomizer;
     Randomizer m_livetime_randomizer;
     Randomizer m_color_randomizer;

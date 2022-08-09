@@ -3,7 +3,7 @@
 
 ParticleFactory::ParticleFactory()
     : m_velosity_randomizer(0.f, 500.f)
-    , m_livetime_randomizer(100.f, 2000.f)
+    , m_livetime_randomizer(50.f, 100.f)
     , m_color_randomizer(20.f, 255.f)
 {
 }
@@ -23,7 +23,7 @@ Particle ParticleFactory::create_particle(const sf::Vector2f & point, sf::Vertex
     vertex.color = sf::Color(red, green, blue, alpha);
 
     particle.m_time_to_die = std::chrono::system_clock::now() +
-        std::chrono::milliseconds(1000 + std::lround(m_livetime_randomizer.random_value()));
+        std::chrono::milliseconds(std::lround(m_livetime_randomizer.random_value()));
 
     return particle;
 }

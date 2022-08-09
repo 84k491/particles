@@ -11,8 +11,16 @@ public:
     }
 
     Particle(const Particle&) = default;
-    Particle & operator =(const Particle& other) = default;
+    Particle & operator =(const Particle& other) = delete;
     Particle(Particle&&) = default;
+    Particle & operator =(Particle&& other)
+    {
+        m_velosity = other.m_velosity;
+        m_time_to_die = other.m_time_to_die;
+        *m_shape = *other.m_shape;
+        return *this;
+    }
+
     ~Particle() = default;
 
     bool is_alive(const std::chrono::time_point<std::chrono::system_clock> & now) const

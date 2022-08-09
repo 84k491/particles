@@ -23,6 +23,15 @@ ParticlesChunk & ParticlesContainer::new_chunk()
     return *result_chunk;
 }
 
+void ParticlesChunk::for_each_alive_particle(const std::function<void(Particle &)> & cb)
+{
+    for (auto it = m_particles.rbegin() + (total_size() - m_alive_count), end = m_particles.rend();
+        it != end;
+        ++it) {
+        cb(*it);
+    }
+}
+
 void ParticlesContainer::for_each_chunk(std::function<void(ParticlesChunk &)> && callback)
 {
     for (auto & chunk : m_chunks) {
@@ -31,7 +40,6 @@ void ParticlesContainer::for_each_chunk(std::function<void(ParticlesChunk &)> &&
             continue;
         }
         callback(chunk);
-        // TODO do mark_as_dead here
     }
 }
 
@@ -40,5 +48,5 @@ void ParticlesChunk::mark_as_dead(Particle & p)
     if (0 == m_alive_count) {
         return;
     }
-    p = m_particles[m_alive_count-- - 1];
+    p = std::move(m_particles[--m_alive_count]);
 }

@@ -39,25 +39,19 @@ void PhysicsCore::calculate()
     const float time_coef = time_diff.count();
     m_previous_calculation = now;
 
-    std::vector<Particle *> dead_particles;
-
     sf::Vector2f gravity_acceleration(0, gravity_coef);
     m_particles.for_each_chunk([&](auto & chunk) {
-        dead_particles.clear();
-        for (auto & p : chunk.particles()) {
+        chunk.for_each_alive_particle([&](auto & p) {
             if (!p.is_alive(now)) {
-                dead_particles.push_back(&p);
-                continue;
+                chunk.mark_as_dead(p);
+                m_chunk_generator.on_particle_died(chunk, p.shape().position);
+                return;
             }
             p.m_velosity += gravity_acceleration * time_coef;
 
             p.shape().position += (p.m_velosity * time_coef);
             handle_border_crossing(p);
-        }
-        for (auto * p : dead_particles) {
-            chunk.mark_as_dead(*p);
-            m_chunk_generator.on_particle_died(chunk, p->shape().position);
-        }
+        });
     });
 }
 
