@@ -7,6 +7,7 @@
 #include "TimeCounter.h"
 #include "ICalculationsProvider.h"
 #include "GravityPoint.h"
+#include "Worker.h"
 
 #include <SFML/Graphics.hpp>
 #include <atomic>
@@ -22,7 +23,7 @@ enum class BorderCrossing {
     Left,
 };
 
-class IChunkGenerator // TODO move it to factory ?
+class IChunkGenerator // TODO move it to factory ? // TODO rename?
 {
 public:
     virtual void on_particle_died(const ParticlesChunk & chunk, const sf::Vector2f & point) = 0;
@@ -39,7 +40,6 @@ public:
         ParticlesContainer & particles,
         IChunkGenerator & chunk_generator,
         const sf::Vector2f& window_br_border);
-    ~PhysicsCore();
 
 private:
     void calculate();
@@ -61,5 +61,5 @@ private:
     AverageCounter<double> m_vel_calc_counter;
     AverageCounter<double> m_pos_calc_counter;
 
-    std::thread m_worker;
+    Worker m_worker;
 };

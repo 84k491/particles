@@ -22,14 +22,8 @@ PhysicsCore::PhysicsCore(
     , m_window_br_border(window_br_border)
     , m_particles(particles)
     , m_chunk_generator(chunk_generator)
-    , m_worker([this]{ while (!m_thread_stopped) { calculate(); } })
+    , m_worker([this]{  calculate(); })
 {
-}
-
-PhysicsCore::~PhysicsCore()
-{
-    m_thread_stopped = true;
-    m_worker.join();
 }
 
 void PhysicsCore::calculate()
