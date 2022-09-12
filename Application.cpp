@@ -5,6 +5,7 @@
 Application::Application()
     : m_window(sf::VideoMode(window_width, window_height), "Particle Sandbox")
     , m_particles(chunk_size)
+    , m_renderer(m_window, m_particles)
     , m_event_handler(m_window, *this)
     , m_spawn_randomizer(.01f)
 {
@@ -19,12 +20,20 @@ Application::Application()
     std::cout << "Vertex size: " << sizeof(sf::Vertex) << std::endl;
 }
 
-void Application::window_loop()
+Renderer::Renderer(sf::RenderWindow & window, ParticlesContainer & particles)
+    : m_particles(particles)
+    , m_window(window)
+    , m_thread([&]() { window_loop(); })
 {
+}
+
+void Renderer::window_loop()
+{
+    m_window.setActive(true);
+
     TimeCounter tc;
     AverageCounter<double> draw_time_counter;
     while (m_window.isOpen()) {
-        m_event_handler.handle_events();
         m_window.clear(sf::Color(0, 0, 0, 255));
 
         m_particles.for_each_chunk([&](const auto & chunk) {
@@ -37,6 +46,13 @@ void Application::window_loop()
     }
     m_fps_counter.print_avg_fps();
     std::cout << "Average draw time: " << draw_time_counter.average() << std::endl;
+}
+
+void Application::window_loop()
+{
+    while (m_window.isOpen()) {
+        m_event_handler.handle_events();
+    }
 }
 
 void Application::on_mouse_event(bool is_pressed, float x, float y)
