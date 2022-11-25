@@ -4,6 +4,7 @@
 #include "Particle.h"
 
 #include <atomic>
+#include <functional>
 #include <SFML/Graphics.hpp>
 #include <list>
 #include <mutex>
@@ -27,7 +28,7 @@ public:
     size_t total_size() const { return m_coordinates.size(); }
 
 private:
-    std::atomic<size_t> m_alive_count = 0;
+    std::atomic<size_t> m_alive_count = {};
 
     std::vector<Particle> m_particles;
     std::vector<sf::Vertex> m_coordinates;
