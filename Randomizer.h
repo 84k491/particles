@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+#include <iostream>
 
 // TODO add lower bound
 class Randomizer
@@ -33,7 +34,11 @@ public:
     {
     }
 
-    bool value() const { return m_randomizer.random_value() < m_probability; }
+    bool value() const
+    {
+        const auto val = m_randomizer.random_value();
+        return val < m_probability;
+    }
 
     const float m_probability = 0.f;
 

@@ -1,13 +1,11 @@
 #include "Application.h"
-#include "TimeCounter.h"
 #include "AverageCounter.h"
 
 Application::Application()
     : m_window(sf::VideoMode(window_width, window_height), "Particle Sandbox")
-    , m_particles(chunk_size)
+    , m_particles()
     , m_renderer(m_window, m_particles)
     , m_event_handler(m_window, *this)
-    , m_spawn_randomizer(.01f)
 {
     m_window.setFramerateLimit(60);
     m_physics_cores.emplace_back(std::make_unique<PhysicsCore>(
@@ -18,34 +16,6 @@ Application::Application()
 
     std::cout << "Particle size: " << sizeof(Particle) << std::endl;
     std::cout << "Vertex size: " << sizeof(sf::Vertex) << std::endl;
-}
-
-Renderer::Renderer(sf::RenderWindow & window, ParticlesContainer & particles)
-    : m_particles(particles)
-    , m_window(window)
-    , m_thread([&]() { window_loop(); })
-{
-}
-
-void Renderer::window_loop()
-{
-    m_window.setActive(true);
-
-    TimeCounter tc;
-    AverageCounter<double> draw_time_counter;
-    while (m_window.isOpen()) {
-        m_window.clear(sf::Color(0, 0, 0, 255));
-
-        m_particles.for_each_chunk([&](const auto & chunk) {
-            const auto & vec = chunk.coordinates();
-            m_window.draw(vec.data(), chunk.alive_count(), sf::Points);
-        });
-
-        m_window.display();
-        m_fps_counter.on_frame_draw();
-    }
-    m_fps_counter.print_avg_fps();
-    std::cout << "Average draw time: " << draw_time_counter.average() << std::endl;
 }
 
 void Application::window_loop()
@@ -61,12 +31,12 @@ void Application::on_mouse_event(bool is_pressed, float x, float y)
         return;
     }
 
-    m_factory.fill_chunk(m_particles.new_chunk(), sf::Vector2f(x, y));
+    generate_chunk(sf::Vector2f(x, y));
 }
 
-void Application::on_particle_died(const ParticlesChunk &, const sf::Vector2f & point)
+void Application::generate_chunk(const sf::Vector2f & point)
 {
-    if (m_spawn_randomizer.value()) {
-        m_factory.fill_chunk(m_particles.new_chunk(), point);
-    }
+    m_particles.emplace_front([&](auto & chunk) {
+        chunk.fill(m_factory, point);
+    });
 }

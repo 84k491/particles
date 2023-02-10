@@ -1,10 +1,14 @@
 #include "ParticleFactory.h"
-#include "ParticlesContainer.h"
+#include "ParticleChunk.h"
+
+#include <iostream>
+#include <mutex>
 
 ParticleFactory::ParticleFactory()
-    : m_velosity_randomizer(0.f, 500.f)
-    , m_livetime_randomizer(50.f, 100.f)
+    : m_velosity_randomizer(10.f, 500.f)
+    , m_livetime_randomizer(100.f, 1000.f)
     , m_color_randomizer(20.f, 255.f)
+    , m_spawn_randomizer(0.01f)
 {
 }
 
@@ -25,17 +29,7 @@ Particle ParticleFactory::create_particle(const sf::Vector2f & point, sf::Vertex
     particle.m_time_to_die = std::chrono::system_clock::now() +
         std::chrono::milliseconds(std::lround(m_livetime_randomizer.random_value()));
 
+    particle.set_will_spawn_new(m_spawn_randomizer.value());
+
     return particle;
-}
-
-void ParticleFactory::fill_chunk(ParticlesChunk & chunk, const sf::Vector2f & point)
-{
-    chunk.particles().clear();
-    chunk.particles().reserve(chunk.total_size());
-
-    for (size_t i = 0; i < chunk.total_size(); ++i) {
-        chunk.particles().emplace_back(create_particle(point, chunk.m_coordinates[i]));
-    }
-
-    chunk.m_alive_count = chunk.total_size();
 }
