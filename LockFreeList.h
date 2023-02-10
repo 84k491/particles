@@ -18,14 +18,15 @@ public:
 template <class T>
 class LockFreeList : public IList<T>
 {
-
     friend class Node;
     class Node
     {
-    using super = LockFreeList<T>;
+        using SuperT = LockFreeList<T>;
+        friend class LockFreeList<T>;
+
     public:
-        Node(super & parent, Node* next_node)
-            : m_next(next_node)
+        Node(SuperT & parent)
+            : m_data(std::make_shared<T>())
             , m_parent(parent)
         {
             m_parent.m_size.fetch_add(1);
@@ -37,13 +38,16 @@ class LockFreeList : public IList<T>
             m_parent.m_size.fetch_sub(1);
         }
 
-        auto get_next_and_maybe_remove()
+        std::shared_ptr<Node> get_next_and_maybe_remove()
         {
-            auto result = m_next.load();
+            auto result = std::atomic_load(&m_next);
             while (result && result->must_be_removed()) {
-                result = result->m_next.load();
-                auto * old_node = m_next.exchange(result);
-                delete old_node;
+                auto new_next = std::atomic_load(&result->m_next);
+                while (!std::atomic_compare_exchange_weak(
+                        &m_next,
+                        &result,
+                        new_next)) {
+                }
                 std::cout << "removed. new size: " << m_parent.size() << std::endl;
             }
             return result;
@@ -54,35 +58,40 @@ class LockFreeList : public IList<T>
     bool must_be_removed() const { return m_remove_mark.load(); }
 
     private:
-        std::atomic<Node*> m_next;
-        std::atomic_bool m_remove_mark;
+        std::shared_ptr<Node> m_next = nullptr;
+        std::atomic_bool m_remove_mark = false;
 
-        std::shared_ptr<T> m_data = nullptr;
-        super & m_parent;
+        std::shared_ptr<T> m_data;
+        SuperT & m_parent;
     };
 
 public:
     LockFreeList()
+        : m_sentinel(std::make_shared<Node>(*this))
     {
     }
 
     void emplace_front(std::function<void(T &)> && callback) override
     {
         std::cout << "emplacing.. " << std::endl;
-        auto new_node = new Node(*this, m_head);
+        auto new_node = std::make_shared<Node>(*this);
         callback(*new_node->data());
 
-        auto old_head = m_head.load();
-        while(!m_head.compare_exchange_weak(old_head, new_node)){}
+        std::shared_ptr<Node> old_head = nullptr;
+        do {
+            old_head = m_sentinel->get_next_and_maybe_remove();
+            new_node->m_next = old_head;
+        } while(!std::atomic_compare_exchange_weak(&m_sentinel->m_next, &old_head, new_node));
     }
 
     void foreach(std::function<bool(T &)> && callback) override
     {
-        for (auto * node_sptr = m_head.load();
+        for (auto node_sptr = m_sentinel->get_next_and_maybe_remove();
              node_sptr != nullptr;
              node_sptr = node_sptr->get_next_and_maybe_remove()) {
 
             if (callback(*node_sptr->data())) {
+                std::cout << "Marking to remove" << std::endl;
                 node_sptr->mark_to_remove();
             }
         }
@@ -91,7 +100,7 @@ public:
     int size() { return m_size.load(); }
 
 private:
-    std::atomic<Node*> m_head = nullptr;
+    std::shared_ptr<Node> m_sentinel = nullptr;
 
     std::atomic<int> m_size = 0;
 };
