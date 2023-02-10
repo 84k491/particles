@@ -28,7 +28,6 @@ void PhysicsCore::calculate()
         chunk.for_each_alive_particle([&](auto & p) -> bool {
             if (!p.is_alive()) {
                 if (p.will_spawn_new()) {
-                    std::cout << "particle death. spawning new" << std::endl;
                     m_chunk_generator.generate_chunk(p.shape().position);
                 }
                 return true;

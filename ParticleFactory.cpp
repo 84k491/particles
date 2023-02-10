@@ -5,8 +5,8 @@
 #include <mutex>
 
 ParticleFactory::ParticleFactory()
-    : m_velosity_randomizer(10.f, 500.f)
-    , m_livetime_randomizer(100.f, 1000.f)
+    : m_velosity_randomizer(100.f, 500.f)
+    , m_livetime_randomizer(10.f, 1000.f)
     , m_color_randomizer(20.f, 255.f)
     , m_spawn_randomizer(0.01f)
 {
@@ -20,9 +20,9 @@ Particle ParticleFactory::create_particle(const sf::Vector2f & point, sf::Vertex
         m_sign_randomizer.random_sign() * m_velosity_randomizer.random_value(),
         m_sign_randomizer.random_sign() * m_velosity_randomizer.random_value());
 
-    const uint8_t red = std::lround(m_color_randomizer.random_value());
+    constexpr uint8_t red = 255;
     const uint8_t green = std::lround(m_color_randomizer.random_value());
-    constexpr uint8_t blue = 225;
+    const uint8_t blue = std::lround(m_color_randomizer.random_value());
     constexpr uint8_t alpha = 255;
     vertex.color = sf::Color(red, green, blue, alpha);
 

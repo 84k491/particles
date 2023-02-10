@@ -34,7 +34,6 @@ void ParticleChunk::mark_as_dead(Particle & p)
 void ParticleChunk::fill(ParticleFactory & factory, const sf::Vector2f & point)
 {
     std::lock_guard l(m_mutex);
-    std::cout << "Filling chunk" << std::endl;
     m_particles.clear();
     m_particles.reserve(total_size());
 

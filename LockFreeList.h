@@ -30,11 +30,11 @@ class LockFreeList : public IList<T>
             , m_parent(parent)
         {
             m_parent.m_size.fetch_add(1);
+            std::cout << "New node created. new size: " << m_parent.m_size.load() << std::endl;
         }
 
         ~Node()
         {
-            std::cout << "NODE DESTRUCTOR" << std::endl;
             m_parent.m_size.fetch_sub(1);
         }
 
@@ -48,14 +48,13 @@ class LockFreeList : public IList<T>
                         &result,
                         new_next)) {
                 }
-                std::cout << "removed. new size: " << m_parent.size() << std::endl;
             }
             return result;
         }
 
-    auto data() const { return m_data; }
-    void mark_to_remove() { m_remove_mark.store(true); }
-    bool must_be_removed() const { return m_remove_mark.load(); }
+        auto data() const { return m_data; }
+        void mark_to_remove() { m_remove_mark.store(true); }
+        bool must_be_removed() const { return m_remove_mark.load(); }
 
     private:
         std::shared_ptr<Node> m_next = nullptr;
@@ -73,7 +72,6 @@ public:
 
     void emplace_front(std::function<void(T &)> && callback) override
     {
-        std::cout << "emplacing.. " << std::endl;
         auto new_node = std::make_shared<Node>(*this);
         callback(*new_node->data());
 
@@ -91,7 +89,6 @@ public:
              node_sptr = node_sptr->get_next_and_maybe_remove()) {
 
             if (callback(*node_sptr->data())) {
-                std::cout << "Marking to remove" << std::endl;
                 node_sptr->mark_to_remove();
             }
         }
