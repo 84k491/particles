@@ -2,8 +2,8 @@
 
 #include "EventHandler.h"
 #include "FpsCounter.h"
-#include "LockFreeList.h"
 #include "ParticleChunk.h"
+#include "IList.h"
 
 #include <SFML/Graphics.hpp>
 #include <memory>
@@ -12,7 +12,7 @@
 class Renderer // TODO move to a separate file
 {
 public:
-    Renderer(sf::RenderWindow & window, LockFreeList<ParticleChunk> & particles);
+    Renderer(sf::RenderWindow & window, IList<ParticleChunk> & particles);
 
     ~Renderer()
     {
@@ -22,9 +22,9 @@ public:
     void window_loop();
 
 private:
-    LockFreeList<ParticleChunk> & m_particles; // TODO make const!!!
+    IList<ParticleChunk> & m_particles;
     sf::RenderWindow & m_window; // TODO const?
     FpsCounter m_fps_counter;
-    std::thread m_thread; //TODO worker?
+    std::thread m_thread; // TODO worker?
 };
 

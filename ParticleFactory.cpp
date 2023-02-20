@@ -5,10 +5,10 @@
 #include <mutex>
 
 ParticleFactory::ParticleFactory()
-    : m_velosity_randomizer(100.f, 500.f)
-    , m_livetime_randomizer(10.f, 1000.f)
+    : m_velosity_randomizer(1.f, 500.f)
+    , m_livetime_randomizer(10.f, 5000.f)
     , m_color_randomizer(20.f, 255.f)
-    , m_spawn_randomizer(0.01f)
+    , m_spawn_randomizer(0.015f)
 {
 }
 

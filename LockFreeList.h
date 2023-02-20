@@ -1,19 +1,13 @@
 #pragma once
 
+#include "IList.h"
+
 #include <atomic>
 #include <functional>
 #include <iostream>
 #include <memory>
 #include <mutex>
 #include <utility>
-
-template <class T>
-class IList
-{
-public:
-    virtual void emplace_front(std::function<void(T &)> && callback) = 0;
-    virtual void foreach(std::function<bool(T &)> && callback) = 0; // true for remove
-};
 
 template <class T>
 class LockFreeList : public IList<T>
@@ -30,7 +24,6 @@ class LockFreeList : public IList<T>
             , m_parent(parent)
         {
             m_parent.m_size.fetch_add(1);
-            std::cout << "New node created. new size: " << m_parent.m_size.load() << std::endl;
         }
 
         ~Node()

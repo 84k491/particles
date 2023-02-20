@@ -1,9 +1,10 @@
 #include "PhysicsCore.h"
+
 #include "GravityPoint.h"
 #include "ParticleChunk.h"
 
 PhysicsCore::PhysicsCore(
-        LockFreeList<ParticleChunk> & particles,
+        IList<ParticleChunk> & particles,
         IChunkGenerator & chunk_generator,
         const sf::Vector2f& window_br_border)
     : m_br_border(sf::Vector2f(window_br_border.x - window_margin_px, window_br_border.y - window_margin_px))
@@ -18,9 +19,9 @@ PhysicsCore::PhysicsCore(
 void PhysicsCore::calculate()
 {
     const auto now = std::chrono::system_clock::now();
-    const std::chrono::duration<double> time_diff = now - m_previous_calculation;
+    const std::chrono::duration<double> time_diff = now - m_previous_calculation_time;
     const float time_coef = time_diff.count();
-    m_previous_calculation = now;
+    m_previous_calculation_time = now;
 
     sf::Vector2f gravity_acceleration(0, gravity_coef);
 

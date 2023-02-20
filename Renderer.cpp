@@ -2,7 +2,7 @@
 
 #include "TimeCounter.h"
 
-Renderer::Renderer(sf::RenderWindow & window, LockFreeList<ParticleChunk> & particles)
+Renderer::Renderer(sf::RenderWindow & window, IList<ParticleChunk> & particles)
     : m_particles(particles)
     , m_window(window)
     , m_thread([&]() { window_loop(); })
